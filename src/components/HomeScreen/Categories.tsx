@@ -1,5 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import * as React from 'react';
+import {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,6 +9,8 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import {useRecoilState} from 'recoil';
+import {categoryState} from '../../recoil/state/category';
 
 const categories = [
   {
@@ -42,24 +45,35 @@ const categories = [
   },
 ];
 
-export default function Categories() {
+export default function Categories({type = '', isListPage = false}) {
   const navigation = useNavigation();
 
+  const [category, setCategory] = useState(type);
+  const [, setCategoryState] = useRecoilState(categoryState);
+
   const handlePress = (id: string) => {
-    navigation.navigate('WordList');
-    console.log(`Category selected: ${id}`);
+    setCategory(id);
+    setCategoryState(id);
+    if (!isListPage) {
+      navigation.navigate('WordList', {type: id});
+    }
   };
 
-  const renderItem = ({item}: any) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      onPress={() => handlePress(item.id)}>
-      <View style={styles.box}>
-        <Image source={item.image} style={styles.image} />
-      </View>
-      <Text style={styles.labelText}>{item.name}</Text>
-    </TouchableOpacity>
-  );
+  const renderItem = ({item}: any) => {
+    return (
+      <TouchableOpacity
+        style={{
+          ...styles.itemContainer,
+          opacity: item.id !== category && isListPage ? 0.5 : 1,
+        }}
+        onPress={() => handlePress(item.id)}>
+        <View style={styles.box}>
+          <Image source={item.image} style={styles.image} />
+        </View>
+        <Text style={styles.labelText}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.body}>

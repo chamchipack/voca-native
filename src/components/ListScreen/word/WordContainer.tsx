@@ -1,23 +1,63 @@
 import * as React from 'react';
-import {StyleSheet, View, Button, FlatList} from 'react-native';
+import {StyleSheet, View, Button, FlatList, Pressable} from 'react-native';
 import Word from './Word';
 
-export default function WordContainer({total = 80}) {
+import {useQuery} from '@apollo/client';
+import {
+  GET_WORD_LIST_AND_TYPE,
+  GET_WORD_LIST_TOTAL_COUNT,
+} from '../../../graphql/query/query';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {categoryState} from '../../../recoil/state/category';
+import {useRecoilValue} from 'recoil';
+
+const fields = [
+  '_id',
+  'ko',
+  'jp',
+  'ro',
+  'etc {form endingjp endingro stemjp stemro exception}',
+];
+
+const offsetCalculate = (cur: number, per: number) => {
+  if (!cur) {
+    return 0;
+  }
+
+  return cur * per;
+};
+
+export default function WordContainer({type = ''}) {
   const [currentPage, setCurrentPage] = React.useState(1); // 현재 페이지
   const itemsPerPage = 10; // 페이지당 항목 수
+
+  const category = useRecoilValue(categoryState);
+
+  const query = GET_WORD_LIST_AND_TYPE(fields);
+
+  const {
+    loading,
+    error,
+    data: test,
+  } = useQuery(query, {
+    variables: {
+      input: {type: category === 'all' ? '' : category},
+      offset: offsetCalculate(currentPage - 1, itemsPerPage),
+      limit: itemsPerPage,
+    },
+  });
+
+  const {data: totalCountData} = useQuery(GET_WORD_LIST_TOTAL_COUNT, {
+    variables: {
+      input: {type: category === 'all' ? '' : category},
+    },
+  });
+
+  const total = totalCountData?.getWordListTotalcount;
+
   const totalPages = Math.ceil(total / itemsPerPage); // 총 페이지 수
 
-  // 현재 페이지의 데이터 (예시 데이터를 만듭니다)
-  const data = Array.from({length: total}).map((_, index) => ({
-    id: index + 1,
-    word: `Word ${index + 1}`,
-  }));
-
-  // 현재 페이지에 표시할 데이터 추출
-  const currentData = data.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  const currentSet = test?.getWordListAndType || [];
 
   // 페이지네이션 버튼 계산
   const getPaginationRange = () => {
@@ -30,11 +70,11 @@ export default function WordContainer({total = 80}) {
     <View style={styles.container}>
       {/* 데이터 리스트 */}
       <FlatList
-        data={currentData}
-        keyExtractor={item => item.id.toString()}
+        data={currentSet}
+        keyExtractor={item => item._id}
         renderItem={({item}) => (
           <View style={{marginTop: 0, marginBottom: 10}}>
-            <Word word={item.word} />
+            <Word word={item.jp} />
             <View style={styles.divider} />
           </View>
         )}
@@ -43,11 +83,15 @@ export default function WordContainer({total = 80}) {
       {/* 페이지네이션 버튼 */}
       <View style={styles.pagination}>
         {/* 이전 페이지 버튼 */}
-        <Button
-          title="Previous"
+        <Pressable
           onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        />
+          disabled={currentPage === 1}>
+          <MaterialIcons
+            name="arrow-back-ios-new"
+            size={20}
+            color={currentPage === 1 ? '#a6a6a6' : 'white'}
+          />
+        </Pressable>
 
         {/* 페이지 번호 버튼 */}
         {getPaginationRange().map(page => (
@@ -60,11 +104,15 @@ export default function WordContainer({total = 80}) {
         ))}
 
         {/* 다음 페이지 버튼 */}
-        <Button
-          title="Next"
+        <Pressable
           onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        />
+          disabled={currentPage === totalPages}>
+          <MaterialIcons
+            name="arrow-forward-ios"
+            size={20}
+            color={currentPage === totalPages ? '#a6a6a6' : 'white'}
+          />
+        </Pressable>
       </View>
     </View>
   );

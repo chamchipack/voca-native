@@ -6,7 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import WordContainer from './word/WordContainer';
 
-export default function Container() {
+export default function Container({type = ''}) {
   const navigation = useNavigation();
 
   return (
@@ -25,8 +25,8 @@ export default function Container() {
           <Input />
         </View>
       </View>
-      <Categories />
-      <WordContainer />
+      <Categories type={type} isListPage={true} />
+      <WordContainer type={type} />
     </View>
   );
 }

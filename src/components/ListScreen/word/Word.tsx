@@ -11,7 +11,7 @@ export default function Word({word = ''}) {
       onPress={() => navigation.navigate('WordDetail')}>
       <View style={{minWidth: '15%'}}>
         <Text style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>
-          可哀
+          {word}
         </Text>
       </View>
       <View style={{width: '85%', marginLeft: 10}}>

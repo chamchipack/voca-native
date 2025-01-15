@@ -1,19 +1,17 @@
 import * as React from 'react';
 
-import {StyleSheet, View} from 'react-native';
-import Container from '../components/ListScreen/Container';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import Login from '../components/Signin/Login';
 
-export default function WordListScreen({route}) {
-  const {params: {type = ''} = {}} = route;
-
+export default function SigninScreen() {
   return (
-    <View
+    <ScrollView
       style={styles.scrollView}
-      // contentContainerStyle={styles.contentContainer}>
-    >
-      <Container type={type} />
-      {/* <View style={styles.container} /> */}
-    </View>
+      contentContainerStyle={styles.contentContainer}>
+      <View style={styles.container}>
+        <Login />
+      </View>
+    </ScrollView>
   );
 }
 
