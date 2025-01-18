@@ -26,7 +26,7 @@ export default function Container({type = ''}) {
         </View>
       </View>
       <Categories type={type} isListPage={true} />
-      <WordContainer type={type} />
+      <WordContainer />
     </View>
   );
 }

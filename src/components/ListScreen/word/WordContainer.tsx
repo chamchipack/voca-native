@@ -1,51 +1,52 @@
 import * as React from 'react';
-import {StyleSheet, View, Button, FlatList, Pressable} from 'react-native';
+import {StyleSheet, View, FlatList} from 'react-native';
 import Word from './Word';
-
 import {useQuery} from '@apollo/client';
 import {
   GET_WORD_LIST_AND_TYPE,
   GET_WORD_LIST_TOTAL_COUNT,
 } from '../../../graphql/query/query';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {categoryState} from '../../../recoil/state/category';
 import {useRecoilValue} from 'recoil';
+import WordSkeleton from './WordSkeleton';
+import {useState} from 'react';
+import Pagination from './Pagination';
 
 const fields = [
   '_id',
   'ko',
   'jp',
   'ro',
-  'etc {form endingjp endingro stemjp stemro exception}',
+  'kana',
+  // 'etc {form endingjp endingro stemjp stemro exception}',
 ];
 
 const offsetCalculate = (cur: number, per: number) => {
   if (!cur) {
     return 0;
   }
-
   return cur * per;
 };
 
-export default function WordContainer({type = ''}) {
-  const [currentPage, setCurrentPage] = React.useState(1); // 현재 페이지
+export default function WordContainer() {
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [cachedData, setCachedData] = useState<any>([]); // 캐시된 데이터
   const itemsPerPage = 10; // 페이지당 항목 수
 
   const category = useRecoilValue(categoryState);
 
   const query = GET_WORD_LIST_AND_TYPE(fields);
 
-  const {
-    loading,
-    error,
-    data: test,
-  } = useQuery(query, {
+  const {data, networkStatus, error} = useQuery(query, {
     variables: {
       input: {type: category === 'all' ? '' : category},
       offset: offsetCalculate(currentPage - 1, itemsPerPage),
       limit: itemsPerPage,
     },
+    fetchPolicy: 'cache-and-network', // 캐시 유지 및 네트워크 요청 동시 수행
+    notifyOnNetworkStatusChange: true, // 네트워크 상태 변화를 감지
   });
+  console.log(error);
 
   const {data: totalCountData} = useQuery(GET_WORD_LIST_TOTAL_COUNT, {
     variables: {
@@ -54,10 +55,18 @@ export default function WordContainer({type = ''}) {
   });
 
   const total = totalCountData?.getWordListTotalcount;
-
   const totalPages = Math.ceil(total / itemsPerPage); // 총 페이지 수
 
-  const currentSet = test?.getWordListAndType || [];
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [category]);
+
+  // 데이터가 변경되었을 때 캐시 업데이트
+  React.useEffect(() => {
+    if (data?.getWordListAndType) {
+      setCachedData(data.getWordListAndType);
+    }
+  }, [data]);
 
   // 페이지네이션 버튼 계산
   const getPaginationRange = () => {
@@ -66,54 +75,32 @@ export default function WordContainer({type = ''}) {
     return Array.from({length: end - start + 1}, (_, i) => start + i);
   };
 
+  const isRefetching = networkStatus === 4; // 데이터 재요청 중인지 확인
+
   return (
     <View style={styles.container}>
       {/* 데이터 리스트 */}
       <FlatList
-        data={currentSet}
+        data={cachedData}
         keyExtractor={item => item._id}
         renderItem={({item}) => (
           <View style={{marginTop: 0, marginBottom: 10}}>
-            <Word word={item.jp} />
+            <Word data={item} wordId={item._id} />
             <View style={styles.divider} />
           </View>
         )}
       />
 
+      {/* 데이터 로드 중 표시 */}
+      {isRefetching && <WordSkeleton />}
+
       {/* 페이지네이션 버튼 */}
-      <View style={styles.pagination}>
-        {/* 이전 페이지 버튼 */}
-        <Pressable
-          onPress={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}>
-          <MaterialIcons
-            name="arrow-back-ios-new"
-            size={20}
-            color={currentPage === 1 ? '#a6a6a6' : 'white'}
-          />
-        </Pressable>
-
-        {/* 페이지 번호 버튼 */}
-        {getPaginationRange().map(page => (
-          <Button
-            key={page}
-            title={page.toString()}
-            onPress={() => setCurrentPage(page)}
-            color={page === currentPage ? 'blue' : 'gray'} // 현재 페이지 강조
-          />
-        ))}
-
-        {/* 다음 페이지 버튼 */}
-        <Pressable
-          onPress={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}>
-          <MaterialIcons
-            name="arrow-forward-ios"
-            size={20}
-            color={currentPage === totalPages ? '#a6a6a6' : 'white'}
-          />
-        </Pressable>
-      </View>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+        getPaginationRange={getPaginationRange}
+      />
     </View>
   );
 }

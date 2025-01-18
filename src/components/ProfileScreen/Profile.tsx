@@ -1,14 +1,37 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useRecoilState} from 'recoil';
 import {authState} from '../../recoil/state/auth';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Keychain from 'react-native-keychain';
 
 export default function Profile() {
   const navigation = useNavigation();
 
+  const getCredentials = async () => {
+    try {
+      const credentials = await Keychain.getGenericPassword();
+      if (credentials) {
+        console.log('Credentials successfully loaded:', credentials);
+      } else {
+        console.log('No credentials stored');
+      }
+    } catch (error) {
+      console.error('Could not load credentials', error);
+    }
+  };
+
   const [auth] = useRecoilState(authState);
+
+  const good = async () => {
+    getCredentials();
+    // const s = await AsyncStorage.clear();
+  };
+  useEffect(() => {
+    good();
+  }, []);
 
   return (
     <View style={styles.container}>

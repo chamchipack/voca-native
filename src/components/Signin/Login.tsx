@@ -6,11 +6,16 @@ import {
   Text,
   StyleSheet,
   Alert,
+  Image,
+  Pressable,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRecoilState} from 'recoil';
 import {authState} from '../../recoil/state/auth';
 import {useNavigation} from '@react-navigation/native';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
+import {START_KAKAO_LOGIN_MUTATION} from '../../graphql/mutation/mutation';
+import Test from './Test';
 
 export default function Login() {
   const navigation = useNavigation();
@@ -44,6 +49,19 @@ export default function Login() {
     }
   };
 
+  const [startKakaoLogin] = useMutation(START_KAKAO_LOGIN_MUTATION([]));
+
+  const onPressKakao = async () => {
+    // 소셜로그인 최초 진입점
+
+    try {
+      const {data} = await startKakaoLogin();
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -64,6 +82,15 @@ export default function Login() {
       <TouchableOpacity style={styles.loginButton} onPress={signin}>
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
+
+      <Pressable onPress={onPressKakao}>
+        <Image
+          style={{width: '100%', height: 50, marginBlock: 20}}
+          source={require('../../images/kakao_login.png')}
+        />
+      </Pressable>
+
+      <Test />
     </View>
   );
 }
