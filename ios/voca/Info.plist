@@ -2,55 +2,109 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-	</array>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>voca</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>arm64</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+    <!-- Kakao 앱 키: 카카오 SDK와 통신하기 위해 사용 -->
+    <key>KAKAO_APP_KEY</key>
+    <string>ce6b65b1637c8c4097cafbef1e16810c</string>
+
+    <!-- 외부 앱 호출을 위한 URL 스키마 허용 목록 -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <!-- 특정 카카오 앱과 통신하기 위한 URL 스키마 -->
+        <string>kakaoce6b65b1637c8c4097cafbef1e16810c</string>
+        <!-- 카카오 링크 기능을 위한 스키마 -->
+        <string>kakaolink</string>
+        <!-- 카카오 인증을 위한 스키마 -->
+        <string>kakaokompassauth</string>
+    </array>
+
+    <!-- 앱에서 사용할 커스텀 폰트 파일 목록 -->
+    <key>UIAppFonts</key>
+    <array>
+        <!-- Material Community Icons 폰트 -->
+        <string>MaterialCommunityIcons.ttf</string>
+        <!-- Material Icons 폰트 -->
+        <string>MaterialIcons.ttf</string>
+    </array>
+
+    <!-- 기본 언어 설정. 'en'은 영어를 의미 -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+
+    <!-- 앱 이름. 홈 화면과 설정에서 표시될 앱 이름 -->
+    <key>CFBundleDisplayName</key>
+    <string>voca</string>
+
+    <!-- 실행 파일 이름. Xcode가 기본적으로 생성 -->
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <!-- 앱의 고유 식별자. Xcode 프로젝트 설정에서 정의됨 -->
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+    <!-- Info.plist 파일의 버전. iOS에서 기본값은 6.0 -->
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <!-- 앱 이름. Xcode 설정에서 기본적으로 정의됨 -->
+    <key>CFBundleName</key>
+    <string>$(PRODUCT_NAME)</string>
+
+    <!-- 앱의 패키지 유형. 'APPL'은 실행 가능한 앱을 의미 -->
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <!-- 사용자에게 표시되는 앱 버전. Xcode 프로젝트 설정의 'Marketing Version' -->
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+
+    <!-- 앱의 내부 빌드 버전. Xcode 프로젝트 설정의 'Build Version' -->
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
+
+    <!-- 앱이 iOS에서만 실행되도록 설정 -->
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <!-- 앱 트랜스포트 보안 설정. 네트워크 보안 관련 정책 정의 -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <!-- 모든 도메인에 대해 비보안 연결 허용 여부 -->
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <!-- 로컬 네트워크 연결 허용 -->
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
+
+    <!-- 위치 정보 사용 시 사용자에게 표시될 설명 -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string></string>
+
+    <!-- 앱의 런치 스크린 파일 이름 -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+
+    <!-- 앱 실행에 필요한 하드웨어 요구사항 -->
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <!-- 앱이 64비트 ARM 프로세서에서 실행 가능하도록 요구 -->
+        <string>arm64</string>
+    </array>
+
+    <!-- 지원하는 화면 방향 -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <!-- 세로 방향 지원 -->
+        <string>UIInterfaceOrientationPortrait</string>
+        <!-- 가로 방향(왼쪽) 지원 -->
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <!-- 가로 방향(오른쪽) 지원 -->
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- 상태 표시줄 스타일을 뷰 컨트롤러별로 설정할지 여부 -->
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
 </dict>
 </plist>

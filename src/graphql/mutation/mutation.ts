@@ -1,17 +1,29 @@
 import {gql} from '@apollo/client';
 
-export const KAKAO_LOGIN_MUTATION = (fields: string[] | []) => {
-  const defaultFields = [
-    'accessToken',
-    'refreshToken',
-    'user { id nickname email }',
-  ];
-  const mutationFields = fields && fields.length > 0 ? fields : defaultFields;
+export const KAKAO_INITIAL_CHECK_MUTATION = (fields: string[] | []) => {
+  const defaultFields = ['status', 'isAuthenticated'];
 
   return gql`
-      mutation KakaoLogin($token: String!) {
-        kakaoLogin(token: $token) {
-          ${mutationFields.join('\n')}
+  mutation kakaoInitialCheck($input: kakaoInitialCheckType) {
+    kakaoInitialCheck(input: $input) {
+      ${defaultFields.join('\n')}
+    }
+  }
+`;
+};
+
+export const KAKAO_LOGIN_MUTATION = (fields: string[] | []) => {
+  const defaultFields = [
+    'status',
+    'message',
+    'data { _id social_id name provider}',
+  ];
+  // const mutationFields = fields && fields.length > 0 ? fields : defaultFields;
+
+  return gql`
+      mutation kakaoLogin($input: kakaoLoginType) {
+        kakaoLogin(input: $input) {
+          ${defaultFields.join('\n')}
         }
       }
     `;

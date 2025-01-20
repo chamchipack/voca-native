@@ -6,7 +6,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import WordContainer from './word/WordContainer';
 
-export default function Container({type = ''}) {
+interface Props {
+  type: string;
+  pageName: string;
+}
+
+export default function Container({type = '', pageName = ''}: Props) {
   const navigation = useNavigation();
 
   return (
@@ -22,7 +27,7 @@ export default function Container({type = ''}) {
           />
         </TouchableOpacity>
         <View style={{width: '90%'}}>
-          <Input />
+          <Input pageName={pageName} />
         </View>
       </View>
       <Categories type={type} isListPage={true} />

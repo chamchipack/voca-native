@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useRecoilState} from 'recoil';
 import {authState} from '../../recoil/state/auth';
@@ -7,8 +7,21 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
 
+type Session = {
+  userId: string;
+  socialId: string;
+  name: string;
+  provider: string;
+};
+
 export default function Profile() {
   const navigation = useNavigation();
+  const [session, setSession] = useState<Session>({
+    userId: '',
+    socialId: '',
+    name: '',
+    provider: '',
+  });
 
   const getCredentials = async () => {
     try {
@@ -23,10 +36,22 @@ export default function Profile() {
     }
   };
 
+  const getStorage = async () => {
+    try {
+      const data = await AsyncStorage.getItem('userInfo');
+
+      if (!data) return;
+
+      const info: Session = JSON.parse(data);
+      setSession(info);
+    } catch (error) {}
+  };
+
   const [auth] = useRecoilState(authState);
 
   const good = async () => {
     getCredentials();
+    getStorage();
     // const s = await AsyncStorage.clear();
   };
   useEffect(() => {
@@ -42,9 +67,9 @@ export default function Profile() {
       <View style={styles.profileContainer}>
         <View style={styles.profileImage} />
         <View style={styles.profileDetails}>
-          {auth.isAuthenticated ? (
+          {session.userId ? (
             <>
-              <Text style={styles.nameText}>{auth?.user?.name}</Text>
+              <Text style={styles.nameText}>{session?.name}</Text>
               <Text style={styles.infoText}>정보</Text>
             </>
           ) : (
@@ -65,7 +90,7 @@ export default function Profile() {
         <Text style={styles.wordbookTitle}>나의 단어장</Text>
         <View style={styles.wordbookCard}>
           <View style={styles.wordbookContent}>
-            {auth.isAuthenticated ? (
+            {session.userId ? (
               <>
                 <MaterialIcons name="arrow-forward" size={18} color="#fff" />
                 <Text style={styles.wordbookText}>단어장 확인하러 가기</Text>

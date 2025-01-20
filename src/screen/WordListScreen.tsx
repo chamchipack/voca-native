@@ -4,14 +4,13 @@ import {StyleSheet, View} from 'react-native';
 import Container from '../components/ListScreen/Container';
 
 export default function WordListScreen({route}) {
-  const {params: {type = ''} = {}} = route;
-
+  const {name, params: {type = ''} = {}} = route;
   return (
     <View
       style={styles.scrollView}
       // contentContainerStyle={styles.contentContainer}>
     >
-      <Container type={type} />
+      <Container type={type} pageName={name} />
       {/* <View style={styles.container} /> */}
     </View>
   );

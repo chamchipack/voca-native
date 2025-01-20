@@ -11,6 +11,20 @@
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
       <activity
+         android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+         android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth“ -->
+            <data android:host="oauth"
+                android:scheme="kakaoce6b65b1637c8c4097cafbef1e16810c" />
+        </intent-filter>
+      </activity>
+      
+      <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"

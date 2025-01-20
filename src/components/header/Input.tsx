@@ -1,12 +1,29 @@
+import {useNavigation} from '@react-navigation/native';
 import * as React from 'react';
 import {useState} from 'react';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useRecoilState} from 'recoil';
+import {inputState} from '../../recoil/state/input';
 
 // const inputColor = '#964F66';
+interface Props {
+  pageName?: string;
+}
+export default function Input({pageName = ''}: Props) {
+  const navigation = useNavigation();
 
-export default function Input() {
   const [text, setText] = useState('');
+  const [, setInputText] = useRecoilState(inputState);
+
+  const onPressSearch = async () => {
+    setInputText(text);
+    if (!pageName) navigation.navigate('WordList');
+  };
+
+  const onChangeText = (data: string) => {
+    setText(data);
+  };
 
   return (
     <View style={styles.inputContainer}>
@@ -14,10 +31,10 @@ export default function Input() {
         style={styles.input}
         placeholder="여기에 입력하세요"
         value={text}
-        onChangeText={setText}
+        onChangeText={onChangeText}
         returnKeyType="search"
       />
-      <TouchableOpacity style={styles.iconContainer}>
+      <TouchableOpacity style={styles.iconContainer} onPress={onPressSearch}>
         <MaterialIcons name="search" size={20} color={'#9b25f5'} />
       </TouchableOpacity>
     </View>

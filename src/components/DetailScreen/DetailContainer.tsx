@@ -2,6 +2,8 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {GET_ONE_WORD_FROM_ID} from '../../graphql/query/query';
 import {useQuery} from '@apollo/client';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AdjectiveTransformer from './AdjectiveTransformer';
+import VerbFormTransformer from './VerbFormTransformer';
 
 interface Props {
   wordId: string;
@@ -14,6 +16,7 @@ const fields = [
   'ro',
   'kana',
   'desc',
+  'type',
   'etc {form endingjp endingro stemjp stemro exception}',
   'example { ko jp }',
 ];
@@ -76,7 +79,7 @@ export default function DetailContainer({wordId = ''}: Props) {
         </View>
       )}
 
-      {Array.isArray(item.example) && item.example.length && (
+      {Array.isArray(item.example) && item.example.length ? (
         <View style={{marginBlock: 10}}>
           <View
             style={{borderWidth: 0.4, borderColor: 'gray', marginBlock: 15}}
@@ -93,7 +96,10 @@ export default function DetailContainer({wordId = ''}: Props) {
             </View>
           ))}
         </View>
-      )}
+      ) : null}
+      {item && item.type === 'adj' && <AdjectiveTransformer data={item} />}
+
+      {item && item.type === 'verb' && <VerbFormTransformer data={item} />}
     </View>
   );
 }

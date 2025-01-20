@@ -7,15 +7,39 @@ import {
   shippingAddresses as getKakaoShippingAddresses,
   unlink,
 } from '@react-native-seoul/kakao-login';
+import {useMutation} from '@apollo/client';
+import {KAKAO_LOGIN_MUTATION} from '../../graphql/mutation/mutation';
 
 const Test = () => {
   const [result, setResult] = useState<string>('');
+  const [kakaoLogin] = useMutation(KAKAO_LOGIN_MUTATION([]));
 
   const signInWithKakao = async (): Promise<void> => {
     try {
       const token = await login();
+      // 로그인 시 리프레시는 서버로
+      // console.log('login success ', token);
+      // 액세스는 키체인으로 보내기.
       setResult(JSON.stringify(token));
-      console.log('login success ', token.accessToken);
+
+      const profile = await getKakaoProfile();
+
+      const form = {
+        provider: 'kakao',
+        social_id: profile.id.toString(),
+        name: profile.nickname,
+        profile_image: profile.profileImageUrl,
+        refresh_token: token.refreshToken,
+        refresh_expires_at: token.refreshTokenExpiresAt,
+      };
+      console.log(form);
+
+      const data = await kakaoLogin({
+        variables: {
+          input: form,
+        },
+      });
+      console.log(data);
     } catch (err) {
       console.error('login err', err);
     }
@@ -24,6 +48,7 @@ const Test = () => {
   const signOutWithKakao = async (): Promise<void> => {
     try {
       const message = await logout();
+      console.log(message);
 
       setResult(message);
     } catch (err) {
@@ -33,10 +58,14 @@ const Test = () => {
 
   const getProfile = async (): Promise<void> => {
     try {
+      const token = JSON.parse(result);
+      console.log(token);
       const profile = await getKakaoProfile();
+      // 로그인 했으면 자동
+      // nickname profileImageUrl thumbnailImageUrl id 도 액세스
       console.log(profile);
 
-      setResult(JSON.stringify(profile));
+      // setResult(JSON.stringify(profile));
     } catch (err) {
       console.error('signOut error', err);
     }

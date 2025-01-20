@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">voca</string>
+    <string name="kakao_app_key">ce6b65b1637c8c4097cafbef1e16810c</string>
 </resources>

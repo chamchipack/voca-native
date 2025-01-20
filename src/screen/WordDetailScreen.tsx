@@ -7,13 +7,9 @@ export default function WordDetailScreen({route = {}}) {
   const {params: {_id = ''} = {}} = route;
 
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.contentContainer}>
-      <View style={styles.container}>
-        <DetailContainer wordId={_id} />
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <DetailContainer wordId={_id} />
+    </View>
   );
 }
 

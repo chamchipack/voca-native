@@ -4,9 +4,12 @@ import {authState} from '../src/recoil/state/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 import * as Keychain from 'react-native-keychain';
+import {useMutation} from '@apollo/client';
+import {KAKAO_INITIAL_CHECK_MUTATION} from '../src/graphql/mutation/mutation';
 
 export default function Splash({children}: {children: React.ReactNode}) {
   const [, setAuth] = useRecoilState(authState);
+  const [kakaoInitialCheck] = useMutation(KAKAO_INITIAL_CHECK_MUTATION([]));
 
   const saveCredentials = async () => {
     try {
@@ -29,8 +32,33 @@ export default function Splash({children}: {children: React.ReactNode}) {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        resetCredentials();
+        // resetCredentials();
         // AsyncStorage에서 id와 pw 가져오기
+        const info = await AsyncStorage.getItem('userInfo');
+
+        if (!info) return;
+
+        const userInfo = JSON.parse(info);
+        // provider
+        if (userInfo.provider === 'local') {
+          console.log('local');
+        } else {
+          const {data} = await kakaoInitialCheck({
+            variables: {
+              input: {
+                social_id: userInfo.socialId,
+                provider: userInfo.provider,
+              },
+            },
+          });
+
+          const {status = 404, isAuthenticated = false} =
+            data?.kakaoInitialCheck || {};
+
+          if (status === 200 && isAuthenticated) console.log('No Problem');
+          else await AsyncStorage.clear();
+        }
+        //
         const id = await AsyncStorage.getItem('id');
         const pw = await AsyncStorage.getItem('pw');
 
@@ -43,7 +71,7 @@ export default function Splash({children}: {children: React.ReactNode}) {
           // console.log('Authentication updated:', {id, pw});
         } else {
           // id 또는 pw가 없으면 초기 상태로 유지
-          console.log('No credentials found in AsyncStorage');
+          // console.log('No credentials found in AsyncStorage');
         }
       } catch (error) {
         console.error('Failed to initialize authentication', error);
