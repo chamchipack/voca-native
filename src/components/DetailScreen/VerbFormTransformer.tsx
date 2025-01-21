@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // CloseIcon 대체
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {verbLogic} from '../../config/transformLogic/verb';
 import {hiragana} from '../../config/default';
 import {Verb, Word} from '../../config/defaultType';
@@ -9,7 +9,7 @@ const VerbFormTransformer = ({...props}) => {
   const [data, setData] = useState<Word<Verb>>(props?.data);
   const [formSelection, setFormSelection] = useState('');
   const [formArray, setFormArray] = useState([]);
-  const [detailSelection, setDetailSelection] = useState<any[]>([]); // 다중 선택을 위한 배열
+  const [detailSelection, setDetailSelection] = useState<any[]>([]);
 
   const handleChipClick = (tense: string) => {
     if (tense === formSelection) {
@@ -22,17 +22,18 @@ const VerbFormTransformer = ({...props}) => {
     setDetailSelection([]);
     setFormSelection(tense);
     const {value = []} = verbLogic.find(({key = ''}) => key === tense) || {};
+    console.log(value);
     setFormArray(value);
   };
 
-  const handleDetailClick = (name: string, value: any) => {
+  const handleDetailClick = (name: string, value: any, index: number) => {
     setDetailSelection(prev => {
       const exists = prev.some(item => item.name === name);
 
       if (exists) {
         return prev.filter(item => item.name !== name);
       } else {
-        return [...prev, {name, value}];
+        return [...prev, {name, value, index}];
       }
     });
   };
@@ -75,9 +76,9 @@ const VerbFormTransformer = ({...props}) => {
 
       {/* Form Selection */}
       <View style={styles.chipContainer}>
-        {verbLogic.map(({name = '', key = ''}) => (
+        {verbLogic.map(({name = '', key = ''}, index: number) => (
           <TouchableOpacity
-            key={`${name}_${key}`}
+            key={`${key || index}_${name}`}
             onPress={() => handleChipClick(key)}
             style={[styles.chip, formSelection === key && styles.selectedChip]}>
             <Text
@@ -106,10 +107,10 @@ const VerbFormTransformer = ({...props}) => {
 
       {/* Detail Selection */}
       <View style={styles.chipContainer}>
-        {formArray.map(({name = '', key = '', value}) => (
+        {formArray.map(({id = '', name = '', key = '', value}, index) => (
           <TouchableOpacity
-            key={`${name}_${key}`}
-            onPress={() => handleDetailClick(name, value)}
+            key={`${id}_${name}_${key}`}
+            onPress={() => handleDetailClick(name, value, index)}
             style={[
               styles.chip,
               detailSelection.map(({name}) => name).includes(name) &&
@@ -136,11 +137,11 @@ const VerbFormTransformer = ({...props}) => {
       </View>
 
       {/* Converted Rows */}
-      <FlatList
-        data={detailSelection}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => onConvertRow(item?.name, item?.value)}
-      />
+      <View>
+        {detailSelection.map((item, index) =>
+          onConvertRow(item?.name, item?.value),
+        )}
+      </View>
     </View>
   );
 };
@@ -149,6 +150,7 @@ export default VerbFormTransformer;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     marginTop: 20,
   },
   title: {

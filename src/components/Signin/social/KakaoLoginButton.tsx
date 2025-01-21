@@ -12,6 +12,20 @@ import {useNavigation} from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// import RNFS from 'react-native-fs';
+
+// const ensureAsyncStorageDirectoryExists = async () => {
+//   const asyncStorageDir = `${RNFS.LibraryDirectoryPath}/RCTAsyncLocalStorage_V1`;
+//   try {
+//     const exists = await RNFS.exists(asyncStorageDir);
+//     if (!exists) {
+//       await RNFS.mkdir(asyncStorageDir);
+//     }
+//   } catch (error) {
+//     console.error('Failed to ensure AsyncStorage directory:', error);
+//   }
+// };
+
 export default function KakaoLoginButton() {
   const navigation = useNavigation();
 
@@ -51,6 +65,7 @@ export default function KakaoLoginButton() {
       };
 
       //   await Keychain.setGenericPassword('access_token', token.accessToken);
+      await AsyncStorage.clear();
       await AsyncStorage.setItem('userInfo', JSON.stringify(storage));
 
       navigation.replace('Profile');

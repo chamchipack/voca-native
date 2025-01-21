@@ -1,5 +1,18 @@
 import {gql} from '@apollo/client';
 
+export const GET_VOCA_LIST = (fields: string[] | []) => {
+  const defaultFields = ['_id', 'language', 'name', 'userId'];
+  const queryFields = fields && fields.length > 0 ? fields : defaultFields;
+
+  return gql`
+      query GetVocaList($input: VocabularyInput!, $offset: Int, $limit: Int) {
+        getVocaList(input: $input, offset: $offset, limit: $limit) {
+          ${queryFields.join('\n')}
+        }
+      }
+    `;
+};
+
 export const GET_WORD_LIST_OR_TYPE = (fields: string[] | []) => {
   const defaultFields = ['_id', 'ko', 'jp', 'ro'];
   const queryFields = fields && fields.length > 0 ? fields : defaultFields;

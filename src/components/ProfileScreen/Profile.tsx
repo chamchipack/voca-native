@@ -6,6 +6,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
+import LogoutButton from './LogoutButton';
+import WordbookCard from './Wordbook';
 
 type Session = {
   userId: string;
@@ -54,6 +56,13 @@ export default function Profile() {
     getStorage();
     // const s = await AsyncStorage.clear();
   };
+
+  const onPressLogout = async () => {
+    try {
+      setSession({userId: '', socialId: '', name: '', provider: ''});
+      await AsyncStorage.setItem('userInfo', '');
+    } catch (e) {}
+  };
   useEffect(() => {
     good();
   }, []);
@@ -86,21 +95,9 @@ export default function Profile() {
         </View>
       </View>
 
-      <View style={styles.wordbookContainer}>
-        <Text style={styles.wordbookTitle}>나의 단어장</Text>
-        <View style={styles.wordbookCard}>
-          <View style={styles.wordbookContent}>
-            {session.userId ? (
-              <>
-                <MaterialIcons name="arrow-forward" size={18} color="#fff" />
-                <Text style={styles.wordbookText}>단어장 확인하러 가기</Text>
-              </>
-            ) : (
-              <Text style={styles.wordbookText}>로그인이 필요합니다</Text>
-            )}
-          </View>
-        </View>
-      </View>
+      <WordbookCard userId={session?.userId || ''} />
+
+      {session.userId ? <LogoutButton onPress={onPressLogout} /> : null}
     </View>
   );
 }
@@ -161,7 +158,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#a6a6a6',
     borderRadius: 10,
-    height: 80,
+    height: 50,
     marginTop: 10,
     padding: 10,
     justifyContent: 'center',

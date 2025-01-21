@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // CloseIcon 대체
 import {adjLogic} from '../../config/transformLogic/adjective';
 import {hiragana} from '../../config/default';
@@ -46,7 +46,7 @@ const AdjectiveTransformer = ({...props}) => {
       const romaji = good.split('_');
 
       let result = '';
-      romaji.map((o: string) => {
+      romaji.forEach((o: string) => {
         let foundation = false;
         Object.values(hiragana).forEach(data => {
           const {jp = ''} = data.find(({ro: _ro}) => _ro === o) || {};
@@ -65,8 +65,7 @@ const AdjectiveTransformer = ({...props}) => {
           </Text>
         </View>
       );
-    } catch (e) {
-      // console.log(e);
+    } catch {
       return null;
     }
   };
@@ -108,9 +107,9 @@ const AdjectiveTransformer = ({...props}) => {
 
       {/* Detail Selection */}
       <View style={styles.chipContainer}>
-        {formArray.map(({name = '', key = '', value}) => (
+        {formArray.map(({name = '', key = '', value}, index) => (
           <TouchableOpacity
-            key={`${name}_${key}_${Math.random()}`}
+            key={`${name}_${key}_${index}`}
             onPress={() => handleDetailClick(name, value)}
             style={[
               styles.chip,
@@ -138,11 +137,11 @@ const AdjectiveTransformer = ({...props}) => {
       </View>
 
       {/* Converted Rows */}
-      <FlatList
-        data={detailSelection}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => onConvertRow(item?.name, item?.value)}
-      />
+      <View>
+        {detailSelection.map((item, index) =>
+          onConvertRow(item?.name, item?.value),
+        )}
+      </View>
     </View>
   );
 };

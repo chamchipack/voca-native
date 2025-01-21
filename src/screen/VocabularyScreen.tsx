@@ -1,17 +1,15 @@
 import * as React from 'react';
 
 import {ScrollView, StyleSheet, View} from 'react-native';
-import DetailContainer from '../components/DetailScreen/DetailContainer';
+import Container from '../components/VocabularyScreen/Container';
 
-export default function WordDetailScreen({route = {}}) {
-  const {params: {_id = ''} = {}} = route;
-
+export default function VocabularyScreen({route = {}}) {
   return (
     <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.contentContainer}>
       <View style={styles.container}>
-        <DetailContainer wordId={_id} />
+        <Container />
       </View>
     </ScrollView>
   );

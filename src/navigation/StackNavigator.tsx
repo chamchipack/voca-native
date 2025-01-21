@@ -5,6 +5,7 @@ import WordListScreen from '../screen/WordListScreen';
 import WordDetailScreen from '../screen/WordDetailScreen';
 import ProfileScreen from '../screen/ProfileScreen';
 import SigninScreen from '../screen/SigninScreen';
+import VocabularyScreen from '../screen/VocabularyScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ export default function StackNavigator() {
       <Stack.Screen name="WordDetail" component={WordDetailScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Signin" component={SigninScreen} />
+      <Stack.Screen name="Vocabulary" component={VocabularyScreen} />
     </Stack.Navigator>
   );
 }

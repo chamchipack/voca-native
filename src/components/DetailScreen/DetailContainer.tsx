@@ -106,6 +106,7 @@ export default function DetailContainer({wordId = ''}: Props) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
   },
   text: {color: 'white'},
